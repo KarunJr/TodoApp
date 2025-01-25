@@ -4,13 +4,15 @@ import { Edit, Trash2 } from "lucide-react"
 import toast from 'react-hot-toast';
 import axios from "axios"
 
+const API_URL = import.meta.env.MODE === "development" ? "http://localhost:5000/api/todo" : "/api/todo";
+axios.defaults.withCredentials = true;
 const TODO = () => {
   const [todo, setTodo] = useState("") //Users Todo
   const [todos, setTodos] = useState([]) // User list of todo or array of todo
 
   const getTodo = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/todo/getTodo")
+      const response = await axios.get(`${API_URL}/getTodo`)
       console.log('Response from DB', response.data.data);
       setTodos(response.data.data)
     } catch (error) {
@@ -33,7 +35,7 @@ const TODO = () => {
       })
     }
     try {
-      const response = await axios.post("http://localhost:5000/api/todo/saveTodo", { todo })
+      const response = await axios.post(`${API_URL}/saveTodo`, { todo })
       // console.log('Todo saved in DB', response.data);
       // setTodos([...todos, response.data.todo]);
       setTodos([...todos, response.data.newTodo]);
@@ -55,7 +57,7 @@ const TODO = () => {
   const deleteTodo =(id) => {
     const confimed = confirm("Do you really want to delete it?")
     if(confimed){
-      const response = axios.delete(`http://localhost:5000/api/todo/deleteTodo/${id}`);
+      const response = axios.delete(`${API_URL}/deleteTodo/${id}`);
       setTodos(todos.filter((todo) => todo._id !== id));
       console.log('Data you want to delete is:',id);
       toast.success("Todo deleted successfully",{
@@ -67,7 +69,7 @@ const TODO = () => {
   const editTodo = async(id, name) => {
     console.log('Editing the todo from id:', id);
     setTodo(name)
-    const response = axios.delete(`http://localhost:5000/api/todo/deleteTodo/${id}`);
+    const response = axios.delete(`${API_URL}/deleteTodo/${id}`);
     setTodos(todos.filter((todo)=> todo._id !== id))
   }
   return (
